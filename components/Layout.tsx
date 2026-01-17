@@ -1,31 +1,107 @@
+import React, { useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { useShop } from "../context/ShopContext";
+import { useLanguage } from "../context/LanguageContext";
 
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { useShop } from '../context/ShopContext';
-
-export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const Layout: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const { cart } = useShop();
-  
+  const { language, setLanguage } = useLanguage();
+  const location = useLocation();
+
+  // نصوص ثنائية اللغة
+  const texts = {
+    home: language === "en" ? "Home" : "الرئيسية",
+    shop: language === "en" ? "Shop" : "المتجر",
+    insights: language === "en" ? "Insights" : "مقالات",
+    about: language === "en" ? "About" : "عن المتجر",
+    contact: language === "en" ? "Contact" : "تواصل معنا",
+    newArrivals: language === "en" ? "New Arrivals" : "وصل حديثاً",
+    bestSellers: language === "en" ? "Best Sellers" : "الأكثر مبيعاً",
+    support: language === "en" ? "Support" : "الدعم",
+    faq: language === "en" ? "FAQ" : "الأسئلة الشائعة",
+    followUs: language === "en" ? "Follow Us" : "تابعنا",
+    timelessFashion:
+      language === "en"
+        ? "Timeless fashion for the modern individual."
+        : "أزياء خالدة للفرد العصري.",
+  };
+
+  // تغيير اتجاه الصفحة عند تغيير اللغة
+  useEffect(() => {
+    document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
+  }, [language]);
+
   return (
     <div className="flex flex-col min-h-screen">
+      {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b border-secondary/10 bg-surface/90 backdrop-blur-md">
         <div className="container mx-auto flex items-center justify-between px-4 py-3">
+          {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <span className="material-symbols-outlined text-3xl text-primary transition-transform group-hover:scale-110">diamond</span>
-            <span className="text-xl font-bold tracking-tight text-primary">Elegance</span>
+            <span className="material-symbols-outlined text-3xl text-primary transition-transform group-hover:scale-110">
+              diamond
+            </span>
+            <span className="text-xl font-bold tracking-tight text-primary">
+              Elegance
+            </span>
           </Link>
-          
+
+          {/* Nav */}
           <nav className="hidden md:flex items-center gap-8">
-            <NavLink to="/">Home</NavLink>
-            <NavLink to="/shop">Shop</NavLink>
-            <NavLink to="/blog">Insights</NavLink>
-            <NavLink to="/about">About</NavLink>
-            <NavLink to="/contact">Contact</NavLink>
+            {[
+              { to: "/", label: texts.home },
+              { to: "/shop", label: texts.shop },
+              { to: "/blog", label: texts.insights },
+              { to: "/about", label: texts.about },
+              { to: "/contact", label: texts.contact },
+            ].map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={`text-sm font-medium transition-colors ${
+                  location.pathname === link.to
+                    ? "text-primary font-bold"
+                    : "text-dark hover:text-primary"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
 
+          {/* Right Controls */}
           <div className="flex items-center gap-3">
-            
-            <Link to="/cart" className="p-2 hover:bg-accent rounded-full text-dark transition-colors relative">
+            {/* Language Switcher */}
+            <div className="inline-flex border rounded overflow-hidden text-sm">
+              <button
+                onClick={() => setLanguage("en")}
+                className={`px-3 py-1 cursor-pointer transition-colors ${
+                  language === "en"
+                    ? "bg-primary text-white"
+                    : "bg-gray-100 text-dark hover:bg-gray-200"
+                }`}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => setLanguage("ar")}
+                className={`px-3 py-1 cursor-pointer transition-colors ${
+                  language === "ar"
+                    ? "bg-primary text-white"
+                    : "bg-gray-100 text-dark hover:bg-gray-200"
+                }`}
+              >
+                AR
+              </button>
+            </div>
+
+            {/* Cart */}
+            <Link
+              to="/cart"
+              className="p-2 hover:bg-accent rounded-full text-dark transition-colors relative"
+            >
               <span className="material-symbols-outlined">shopping_bag</span>
               {cart.length > 0 && (
                 <span className="absolute top-0 right-0 h-4 w-4 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center">
@@ -33,42 +109,64 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
                 </span>
               )}
             </Link>
-            <Link to="/account" className="p-2 hover:bg-accent rounded-full text-dark transition-colors">
+
+            {/* Account */}
+            <Link
+              to="/account"
+              className="p-2 hover:bg-accent rounded-full text-dark transition-colors"
+            >
               <span className="material-symbols-outlined">person</span>
             </Link>
           </div>
         </div>
       </header>
-      
-      <main className="flex-grow">
-        {children}
-      </main>
 
+      <main className="flex-grow">{children}</main>
+
+      {/* Footer */}
       <footer className="bg-surface border-t border-secondary/10 mt-auto">
         <div className="container mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <h3 className="font-bold text-lg mb-4 text-primary">Elegance</h3>
-              <p className="text-sm text-gray-500">Timeless fashion for the modern individual.</p>
+              <p className="text-sm text-gray-500">{texts.timelessFashion}</p>
             </div>
             <div>
-              <h3 className="font-bold text-md mb-4">Shop</h3>
+              <h3 className="font-bold text-md mb-4">{texts.shop}</h3>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link to="/shop" className="hover:text-primary">New Arrivals</Link></li>
-                <li><Link to="/shop" className="hover:text-primary">Best Sellers</Link></li>
+                <li>
+                  <Link to="/shop" className="hover:text-primary">
+                    {texts.newArrivals}
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/shop" className="hover:text-primary">
+                    {texts.bestSellers}
+                  </Link>
+                </li>
               </ul>
             </div>
             <div>
-              <h3 className="font-bold text-md mb-4">Support</h3>
+              <h3 className="font-bold text-md mb-4">{texts.support}</h3>
               <ul className="space-y-2 text-sm text-gray-600">
-                 <li><Link to="/faq" className="hover:text-primary">FAQ</Link></li>
-                 <li><Link to="/contact" className="hover:text-primary">Contact</Link></li>
+                <li>
+                  <Link to="/faq" className="hover:text-primary">
+                    {texts.faq}
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/contact" className="hover:text-primary">
+                    {texts.contact}
+                  </Link>
+                </li>
               </ul>
             </div>
             <div>
-              <h3 className="font-bold text-md mb-4">Follow Us</h3>
+              <h3 className="font-bold text-md mb-4">{texts.followUs}</h3>
               <div className="flex space-x-4 text-gray-400">
-                <span>FB</span><span>IG</span><span>TW</span>
+                <span>FB</span>
+                <span>IG</span>
+                <span>TW</span>
               </div>
             </div>
           </div>
@@ -78,18 +176,5 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         </div>
       </footer>
     </div>
-  );
-};
-
-const NavLink: React.FC<{ to: string; children: React.ReactNode }> = ({ to, children }) => {
-  const location = useLocation();
-  const isActive = location.pathname === to;
-  return (
-    <Link 
-      to={to} 
-      className={`text-sm font-medium transition-colors ${isActive ? 'text-primary font-bold' : 'text-dark hover:text-primary'}`}
-    >
-      {children}
-    </Link>
   );
 };

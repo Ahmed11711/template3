@@ -1,79 +1,71 @@
-import { APIS } from './apis';
-import { MOCK_PRODUCTS, MOCK_USER, MOCK_CART, MOCK_BLOGS, MOCK_FAQ, MOCK_ORDERS } from './fakeData';
-import { APIResponse } from '../types';
+// src/api/request.ts
 
-// ============================================
-// CONFIGURATION SWITCH
-// ============================================
-const USE_MOCK = true;
-const MOCK_DELAY = 300; // ms to simulate latency
+export const APIS = {
+  PRODUCTS: {
+    GET_ALL: { url: '/api/front/products', method: 'GET' },
+    GET_ONE: { url: '/api/front/products/:id', method: 'GET' },
+    GET_LATEST: { url: '/api/v1/products/latest', method: 'GET' },
+    GET_RELATED: { url: '/api/v1/products/:id/related', method: 'GET' },
+  },
+  CART: { /* ... */ },
+  ORDERS: { /* ... */ },
+  USER: { /* ... */ },
+  CONTENT: { /* ... */ },
+};
 
-// Generic Request Handler
-export async function request<T>(endpoint: { url: string; method: string }, body?: any, params?: Record<string, string>): Promise<T> {
-  if (USE_MOCK) {
-    return mockRequest<T>(endpoint, body, params);
-  } else {
-    // Real Fetch Implementation
-    // Replace URL params
-    let url = endpoint.url;
-    if (params) {
-      Object.entries(params).forEach(([key, value]) => {
-        url = url.replace(`:${key}`, value);
-      });
-    }
-    
-    const response = await fetch(url, {
-      method: endpoint.method,
-      headers: {
-        'Content-Type': 'application/json',
-        // Add Authorization headers here if needed
-      },
-      body: body ? JSON.stringify(body) : undefined,
+const USE_MOCK = false;
+const BASE_URL = 'http://127.0.0.1:8000';
+
+function mockRequest<T>(
+  endpoint: { url: string; method: string },
+  body?: any,
+  params?: Record<string, string>
+): Promise<T> {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve({} as T), 300);
+  });
+}
+
+export async function request<T>(
+  endpoint: { url: string; method: string },
+  body?: any,
+  params?: Record<string, string>
+): Promise<T> {
+  if (USE_MOCK) return mockRequest<T>(endpoint, body, params);
+
+  let url = BASE_URL + endpoint.url;
+  if (params) {
+    Object.entries(params).forEach(([key, value]) => {
+      url = url.replace(`:${key}`, value);
     });
+  }
 
-    if (!response.ok) {
-      throw new Error(`API Error: ${response.statusText}`);
-    }
+  const headers: HeadersInit = {};
+  const token = localStorage.getItem('token');
+  if (token) headers['Authorization'] = `Bearer ${token}`;
 
-    return response.json();
+  // لو body مش FormData نعمله JSON و نضيف header
+  let payload;
+  if (body instanceof FormData) {
+    payload = body;
+  } else if (body) {
+    headers['Content-Type'] = 'application/json';
+    payload = JSON.stringify(body);
+  }
+
+  const response = await fetch(url, {
+    method: endpoint.method,
+    headers,
+    body: payload,
+    credentials: 'include', // مهم جداً
+  });
+
+  const text = await response.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+    console.error('API Response is not JSON:', text);
+    throw new Error('Expected JSON, got HTML or invalid JSON');
   }
 }
 
-// Mock Request Router
-function mockRequest<T>(endpoint: { url: string; method: string }, body?: any, params?: Record<string, string>): Promise<T> {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      let data: any;
-
-      // Simple Router for Mocks
-      if (endpoint === APIS.PRODUCTS.GET_ALL) {
-        data = MOCK_PRODUCTS;
-      } else if (endpoint === APIS.PRODUCTS.GET_LATEST) {
-        data = MOCK_PRODUCTS.slice(5); // Last few
-      } else if (endpoint === APIS.PRODUCTS.GET_ONE) {
-         data = MOCK_PRODUCTS.find(p => p.id === params?.id) || MOCK_PRODUCTS[0];
-      } else if (endpoint === APIS.PRODUCTS.GET_RELATED) {
-         data = MOCK_PRODUCTS.slice(0, 4);
-      } else if (endpoint === APIS.USER.PROFILE || endpoint === APIS.USER.LOGIN || endpoint === APIS.USER.REGISTER) {
-        data = MOCK_USER;
-      } else if (endpoint === APIS.CART.GET) {
-        data = MOCK_CART;
-      } else if (endpoint === APIS.CONTENT.BLOGS) {
-        data = MOCK_BLOGS;
-      } else if (endpoint === APIS.CONTENT.FAQ) {
-        data = MOCK_FAQ;
-      } else if (endpoint === APIS.ORDERS.GET) {
-        data = MOCK_ORDERS;
-      } else {
-        // Default fallthrough or specific POST/PUT mocks
-        if (endpoint.method !== 'GET') {
-          resolve({ success: true, message: 'Operation successful (Mock)' } as any);
-          return;
-        }
-        data = [];
-      }
-
-      resolve(data as T);
-    }, MOCK_DELAY);
-  });
-}

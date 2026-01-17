@@ -4,19 +4,19 @@
 export const APIS = {
   PRODUCTS: {
     GET_ALL: {
-      url: '/api/products',
+      url: '/api/v1/products',
       method: 'GET',
     },
     GET_ONE: {
-      url: '/api/products/:id',
+      url: '/api/v1/products/:id',
       method: 'GET',
     },
     GET_LATEST: {
-      url: '/api/products/latest',
+      url: '/api/v1/products/latest',
       method: 'GET',
     },
     GET_RELATED: {
-      url: '/api/products/:id/related',
+      url: '/api/v1/products/:id/related',
       method: 'GET',
     },
   },
@@ -47,6 +47,11 @@ export const APIS = {
       url: '/api/orders/:id',
       method: 'GET',
     },
+       CREATE: {
+    url: '/api/front/orders',
+    method: 'POST',
+  },
+
   },
   USER: {
     PROFILE: {
@@ -66,14 +71,18 @@ export const APIS = {
       method: 'POST',
     },
   },
-  CONTENT: {
+ 
     BLOGS: {
-      url: '/api/content/blogs',
+      url: '/api/front/articles',
+      method: 'GET',
+    },
+    GET_ONE: {
+      url: '/api/front/articles/:id',
       method: 'GET',
     },
     FAQ: {
       url: '/api/content/faq',
       method: 'GET',
     },
-  },
+ 
 };

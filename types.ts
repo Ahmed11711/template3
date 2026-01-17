@@ -8,8 +8,14 @@ export interface Product {
   reviews: number;
   isNew?: boolean;
   description?: string;
+  mainImage?: string;
 }
 
+export interface Category {
+  id: number;
+  name: string;
+  products: Product[];
+}
 export interface CartItem extends Product {
   quantity: number;
   size?: string;
