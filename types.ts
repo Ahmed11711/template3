@@ -1,20 +1,31 @@
 export interface Product {
   id: string;
-  name: string;
+  name?: string; // Legacy field for backward compatibility
+  name_en?: string;
+  name_ar?: string;
   price: number;
-  image: string;
+  image?: string; // Legacy field
   category: string;
-  rating: number;
-  reviews: number;
+  category_en?: string;
+  category_ar?: string;
+  rating?: number;
+  reviews?: number;
   isNew?: boolean;
-  description?: string;
+  description?: string; // Legacy field
+  description_en?: string;
+  description_ar?: string;
   mainImage?: string;
+  additionalImages?: string;
+  stock?: number;
 }
 
 export interface Category {
   id: number;
-  name: string;
+  name?: string; // Legacy field
+  name_en?: string;
+  name_ar?: string;
   products: Product[];
+  image?: string;
 }
 export interface CartItem extends Product {
   quantity: number;
@@ -47,9 +58,15 @@ export interface Order {
 
 export interface BlogPost {
   id: string;
-  title: string;
-  excerpt: string;
-  category: string;
+  title?: string; // Legacy field
+  title_en?: string;
+  title_ar?: string;
+  excerpt?: string; // Legacy field
+  excerpt_en?: string;
+  excerpt_ar?: string;
+  category?: string; // Legacy field
+  category_en?: string;
+  category_ar?: string;
   date: string;
   image: string;
 }

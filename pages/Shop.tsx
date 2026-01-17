@@ -1,17 +1,14 @@
 // src/pages/Shop.tsx
 import React, { useEffect, useState } from "react";
-import { Product } from "../types";
+import { Product, Category } from "../types";
 import { ProductCard } from "../components/ProductCard";
 import { useSearchParams } from "react-router-dom";
 import { categoryService } from "../api/services/categoryService";
-
-interface Category {
-  id: number;
-  name: string;
-  products: Product[];
-}
+import { useLanguage } from "../context/LanguageContext";
+import { getLocalizedText } from "../utils/i18n";
 
 export const Shop = () => {
+  const { language, t } = useLanguage();
   const [searchParams] = useSearchParams();
   const initialCategory = searchParams.get("category");
 
@@ -26,7 +23,7 @@ export const Shop = () => {
     initialCategory ? [parseInt(initialCategory)] : [],
   );
   const [priceRange, setPriceRange] = useState<number>(1000);
-  const [sortOption, setSortOption] = useState<string>("Newest");
+  const [sortOption, setSortOption] = useState<string>(t("shop.newest"));
 
   // Fetch categories + products from API
   useEffect(() => {
@@ -80,9 +77,9 @@ export const Shop = () => {
     filtered = filtered.filter((p) => p.price <= priceRange);
 
     // Sort
-    if (sortOption === "Price: Low to High") {
+    if (sortOption === t("shop.priceLowToHigh")) {
       filtered.sort((a, b) => a.price - b.price);
-    } else if (sortOption === "Price: High to Low") {
+    } else if (sortOption === t("shop.priceHighToLow")) {
       filtered.sort((a, b) => b.price - a.price);
     } else {
       filtered.sort((a, b) => b.id - a.id); // Newest first
@@ -104,9 +101,9 @@ export const Shop = () => {
       {/* Header + Sorting */}
       <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
         <div>
-          <div className="text-sm text-gray-500 mb-2">Home / Shop</div>
+          <div className="text-sm text-gray-500 mb-2">{t("shop.breadcrumb")}</div>
           <h1 className="text-4xl font-extrabold text-dark tracking-tight">
-            Shop All Products
+            {t("shop.title")}
           </h1>
         </div>
         <select
@@ -114,9 +111,9 @@ export const Shop = () => {
           value={sortOption}
           onChange={(e) => setSortOption(e.target.value)}
         >
-          <option>Newest</option>
-          <option>Price: Low to High</option>
-          <option>Price: High to Low</option>
+          <option>{t("shop.newest")}</option>
+          <option>{t("shop.priceLowToHigh")}</option>
+          <option>{t("shop.priceHighToLow")}</option>
         </select>
       </div>
 
@@ -124,32 +121,35 @@ export const Shop = () => {
         {/* Sidebar Filters */}
         <aside className="lg:col-span-1">
           <div className="bg-surface p-6 rounded-xl shadow-sm border border-secondary/10 sticky top-24">
-            <h2 className="font-bold text-lg mb-4">Filters</h2>
+            <h2 className="font-bold text-lg mb-4">{t("shop.filters")}</h2>
             <div className="space-y-6">
               {/* Category Filter */}
               <div>
-                <h3 className="font-semibold mb-2">Category</h3>
+                <h3 className="font-semibold mb-2">{t("shop.category")}</h3>
                 <div className="space-y-2">
-                  {categories.map((c) => (
-                    <label
-                      key={c.id}
-                      className="flex items-center space-x-2 cursor-pointer"
-                    >
-                      <input
-                        type="checkbox"
-                        className="rounded text-primary focus:ring-primary border-gray-300"
-                        checked={selectedCategories.includes(c.id)}
-                        onChange={() => toggleCategory(c.id)}
-                      />
-                      <span className="text-sm text-gray-600">{c.name_en}</span>
-                    </label>
-                  ))}
+                  {categories.map((c) => {
+                    const categoryName = language === "ar" ? (c.name_ar || c.name_en || "") : (c.name_en || c.name_ar || "");
+                    return (
+                      <label
+                        key={c.id}
+                        className="flex items-center space-x-2 cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          className="rounded text-primary focus:ring-primary border-gray-300"
+                          checked={selectedCategories.includes(c.id)}
+                          onChange={() => toggleCategory(c.id)}
+                        />
+                        <span className="text-sm text-gray-600">{categoryName}</span>
+                      </label>
+                    );
+                  })}
                 </div>
               </div>
 
               {/* Price Filter */}
               <div>
-                <h3 className="font-semibold mb-2">Max Price: ${priceRange}</h3>
+                <h3 className="font-semibold mb-2">{t("shop.maxPrice")}: ${priceRange}</h3>
                 <input
                   type="range"
                   min="0"
@@ -170,10 +170,11 @@ export const Shop = () => {
               onClick={() => {
                 setSelectedCategories([]);
                 setPriceRange(1000);
+                setSortOption(t("shop.newest"));
               }}
               className="w-full mt-6 bg-gray-100 text-dark hover:bg-gray-200 py-2 rounded-lg font-bold text-sm transition-colors"
             >
-              Reset Filters
+              {t("shop.resetFilters")}
             </button>
           </div>
         </aside>
@@ -181,13 +182,13 @@ export const Shop = () => {
         {/* Product Grid */}
         <div className="lg:col-span-3">
           {loading ? (
-            <div className="text-center py-20 text-gray-500">Loading...</div>
+            <div className="text-center py-20 text-gray-500">{t("common.loading")}</div>
           ) : products.length === 0 ? (
             <div className="text-center py-20 text-gray-500">
               <span className="material-symbols-outlined text-4xl mb-2">
                 filter_alt_off
               </span>
-              <p>No products match your filters.</p>
+              <p>{t("shop.noProducts")}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">

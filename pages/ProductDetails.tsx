@@ -5,9 +5,12 @@ import { productService } from "../api/services/productService";
 import { Product } from "../types";
 import { ProductCard } from "../components/ProductCard";
 import { useShop } from "../context/ShopContext";
+import { useLanguage } from "../context/LanguageContext";
+import { getLocalizedText } from "../utils/i18n";
 
 export const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
+  const { language, t } = useLanguage();
   const [product, setProduct] = useState<Product | null>(null);
   const [related, setRelated] = useState<Product[]>([]);
   const [quantity, setQuantity] = useState(1);
@@ -30,7 +33,7 @@ export const ProductDetails = () => {
         setMainImage(prod.mainImage || "/fallback-image.png");
         setQuantity(1);
       })
-      .catch(() => setError("Failed to load product."))
+      .catch(() => setError(t("common.error")))
       .finally(() => setLoading(false));
 
     // Fetch any products to show as "related"
@@ -50,7 +53,7 @@ export const ProductDetails = () => {
     return (
       <div className="p-20 text-center flex flex-col items-center">
         <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mb-4"></div>
-        Loading...
+        {t("common.loading")}
       </div>
     );
 
@@ -60,6 +63,8 @@ export const ProductDetails = () => {
   if (!product) return null;
 
   const isFav = favorites.includes(product.id);
+  const productName = getLocalizedText(product, language, product.name || '');
+  const productDescription = getLocalizedText(product, language, product.description || '');
 
   // Handle images
   const images = product.additionalImages
@@ -76,7 +81,7 @@ export const ProductDetails = () => {
           <div className="aspect-square bg-gray-100 rounded-xl overflow-hidden shadow-lg">
             <img
               src={mainImg}
-              alt={product.name_en}
+              alt={productName}
               className="w-full h-full object-cover"
             />
           </div>
@@ -99,16 +104,16 @@ export const ProductDetails = () => {
 
         {/* Product Info */}
         <div className="flex flex-col gap-6">
-          <h1 className="text-4xl font-bold text-dark">{product.name_en}</h1>
+          <h1 className="text-4xl font-bold text-dark">{productName}</h1>
           <p className="text-3xl font-bold text-primary">
             ${product.price?.toFixed(2) ?? "0.00"}
           </p>
           <p className="text-gray-600 leading-relaxed">
-            {product.description_en}
+            {productDescription}
           </p>
 
           <div className="flex items-center gap-4 pt-4">
-            <span className="font-medium text-dark">Quantity:</span>
+            <span className="font-medium text-dark">{t("product.quantity")}:</span>
             <div className="flex items-center border border-gray-300 rounded-lg">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -139,7 +144,7 @@ export const ProductDetails = () => {
               <span className="material-symbols-outlined">
                 add_shopping_cart
               </span>
-              Add to Cart
+              {t("product.addToCart")}
             </button>
             <button
               onClick={() => toggleFavorite(product.id)}
@@ -162,14 +167,14 @@ export const ProductDetails = () => {
       {/* Related Products */}
       <section>
         <h2 className="text-3xl font-bold text-center mb-8">
-          You Might Also Like
+          {t("product.relatedProducts")}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {related.length > 0 ? (
             related.map((p) => <ProductCard key={p.id} product={p} />)
           ) : (
             <p className="col-span-full text-center text-gray-500">
-              No related products found.
+              {t("product.noRelatedProducts")}
             </p>
           )}
         </div>

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
 import { useLanguage } from "../context/LanguageContext";
@@ -7,31 +7,8 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { cart } = useShop();
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const location = useLocation();
-
-  // نصوص ثنائية اللغة
-  const texts = {
-    home: language === "en" ? "Home" : "الرئيسية",
-    shop: language === "en" ? "Shop" : "المتجر",
-    insights: language === "en" ? "Insights" : "مقالات",
-    about: language === "en" ? "About" : "عن المتجر",
-    contact: language === "en" ? "Contact" : "تواصل معنا",
-    newArrivals: language === "en" ? "New Arrivals" : "وصل حديثاً",
-    bestSellers: language === "en" ? "Best Sellers" : "الأكثر مبيعاً",
-    support: language === "en" ? "Support" : "الدعم",
-    faq: language === "en" ? "FAQ" : "الأسئلة الشائعة",
-    followUs: language === "en" ? "Follow Us" : "تابعنا",
-    timelessFashion:
-      language === "en"
-        ? "Timeless fashion for the modern individual."
-        : "أزياء خالدة للفرد العصري.",
-  };
-
-  // تغيير اتجاه الصفحة عند تغيير اللغة
-  useEffect(() => {
-    document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
-  }, [language]);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -51,11 +28,11 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
           {/* Nav */}
           <nav className="hidden md:flex items-center gap-8">
             {[
-              { to: "/", label: texts.home },
-              { to: "/shop", label: texts.shop },
-              { to: "/blog", label: texts.insights },
-              { to: "/about", label: texts.about },
-              { to: "/contact", label: texts.contact },
+              { to: "/", label: t("navigation.home") },
+              { to: "/shop", label: t("navigation.shop") },
+              { to: "/blog", label: t("navigation.insights") },
+              { to: "/about", label: t("navigation.about") },
+              { to: "/contact", label: t("navigation.contact") },
             ].map((link) => (
               <Link
                 key={link.to}
@@ -104,7 +81,12 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
             >
               <span className="material-symbols-outlined">shopping_bag</span>
               {cart.length > 0 && (
-                <span className="absolute top-0 right-0 h-4 w-4 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                <span 
+                  className="absolute top-0 h-4 w-4 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center"
+                  style={{
+                    [language === 'ar' ? 'left' : 'right']: '0'
+                  }}
+                >
                   {cart.reduce((acc, item) => acc + item.quantity, 0)}
                 </span>
               )}
@@ -129,40 +111,40 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <h3 className="font-bold text-lg mb-4 text-primary">Elegance</h3>
-              <p className="text-sm text-gray-500">{texts.timelessFashion}</p>
+              <p className="text-sm text-gray-500">{t("footer.timelessFashion")}</p>
             </div>
             <div>
-              <h3 className="font-bold text-md mb-4">{texts.shop}</h3>
+              <h3 className="font-bold text-md mb-4">{t("navigation.shop")}</h3>
               <ul className="space-y-2 text-sm text-gray-600">
                 <li>
                   <Link to="/shop" className="hover:text-primary">
-                    {texts.newArrivals}
+                    {t("footer.newArrivals")}
                   </Link>
                 </li>
                 <li>
                   <Link to="/shop" className="hover:text-primary">
-                    {texts.bestSellers}
+                    {t("footer.bestSellers")}
                   </Link>
                 </li>
               </ul>
             </div>
             <div>
-              <h3 className="font-bold text-md mb-4">{texts.support}</h3>
+              <h3 className="font-bold text-md mb-4">{t("footer.support")}</h3>
               <ul className="space-y-2 text-sm text-gray-600">
                 <li>
                   <Link to="/faq" className="hover:text-primary">
-                    {texts.faq}
+                    {t("navigation.faq")}
                   </Link>
                 </li>
                 <li>
                   <Link to="/contact" className="hover:text-primary">
-                    {texts.contact}
+                    {t("navigation.contact")}
                   </Link>
                 </li>
               </ul>
             </div>
             <div>
-              <h3 className="font-bold text-md mb-4">{texts.followUs}</h3>
+              <h3 className="font-bold text-md mb-4">{t("footer.followUs")}</h3>
               <div className="flex space-x-4 text-gray-400">
                 <span>FB</span>
                 <span>IG</span>
@@ -171,7 +153,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
             </div>
           </div>
           <div className="border-t border-secondary/10 mt-8 pt-6 text-center text-xs text-gray-400">
-            © 2024 Elegance Store. All Rights Reserved.
+            {t("footer.copyright")}
           </div>
         </div>
       </footer>

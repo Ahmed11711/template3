@@ -2,10 +2,14 @@ import React from "react";
 import { Product } from "../types";
 import { Link } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
+import { useLanguage } from "../context/LanguageContext";
 
 export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const { addToCart, toggleFavorite, favorites } = useShop();
+  const { language, t } = useLanguage();
   const isFav = favorites.includes(product.id);
+
+  const productName = language === "ar" ? (product.name_ar || product.name_en || "") : (product.name_en || product.name_ar || "");
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -24,6 +28,9 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
       <button
         onClick={handleToggleFavorite}
         className={`absolute top-3 right-3 z-20 p-2 rounded-full bg-white/80 backdrop-blur-sm shadow-sm transition-transform hover:scale-110 ${isFav ? "text-red-500" : "text-gray-400"}`}
+        style={{ 
+          ...(language === 'ar' ? { right: 'auto', left: '0.75rem' } : {})
+        }}
       >
         <span
           className={`material-symbols-outlined text-xl ${isFav ? "fill" : ""}`}
@@ -35,12 +42,15 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
       <div className="relative aspect-square overflow-hidden">
         <img
           src={product.mainImage}
-          alt={product.name_en}
+          alt={productName}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
         <button
           onClick={handleAddToCart}
           className="absolute bottom-4 right-4 h-10 w-10 flex items-center justify-center rounded-full bg-primary text-white opacity-0 translate-y-4 shadow-lg transition-all group-hover:translate-y-0 group-hover:opacity-100 hover:bg-secondary"
+          style={{ 
+            ...(language === 'ar' ? { right: 'auto', left: '1rem' } : {})
+          }}
         >
           <span className="material-symbols-outlined text-sm">
             add_shopping_cart
@@ -50,15 +60,17 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
       <div className="p-4 flex flex-col flex-1">
         <Link to={`/product/${product.id}`}>
           <h3 className="font-semibold text-dark truncate hover:text-primary transition-colors">
-            {product.name_en}
+            {productName}
           </h3>
         </Link>
-        <p className="text-xs text-gray-400 mt-1">Stock: {product.stock}</p>
+        {product.stock !== undefined && (
+          <p className="text-xs text-gray-400 mt-1">{t("shop.stock")}: {product.stock}</p>
+        )}
         <div className="flex items-center justify-between mt-2">
           <p className="text-primary font-bold">${product.price.toFixed(2)}</p>
           {/* Placeholder for reviews */}
           <div className="flex items-center text-xs text-gray-500">
-            <span className="material-symbols-outlined text-yellow-400 text-sm mr-1 fill">
+            <span className={`material-symbols-outlined text-yellow-400 text-sm fill ${language === 'ar' ? 'ml-1' : 'mr-1'}`}>
               star
             </span>
             (0)

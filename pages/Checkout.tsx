@@ -2,9 +2,12 @@ import React, { useState } from "react";
 import { useShop } from "../context/ShopContext";
 import { Link } from "react-router-dom";
 import { orderService } from "../api/services/orderService";
+import { useLanguage } from "../context/LanguageContext";
+import { getLocalizedText } from "../utils/i18n";
 
 export const Checkout = () => {
   const { cart, clearCart } = useShop();
+  const { language, t } = useLanguage();
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -62,7 +65,7 @@ export const Checkout = () => {
       clearCart();
     } catch (error: any) {
       console.error(error);
-      alert(error.message || "Failed to create order. Please try again.");
+      alert(error.message || t("common.error"));
     } finally {
       setIsProcessing(false);
     }
@@ -76,15 +79,15 @@ export const Checkout = () => {
             check_circle
           </span>
         </div>
-        <h1 className="text-4xl font-black text-dark mb-4">Order Confirmed!</h1>
+        <h1 className="text-4xl font-black text-dark mb-4">{t("checkout.orderConfirmed")}</h1>
         <p className="text-gray-600 max-w-md mb-8">
-          Thank you for your purchase. Your order has been received.
+          {t("checkout.orderConfirmedMessage")}
         </p>
         <Link
           to="/"
           className="bg-primary text-white px-8 py-3 rounded-lg font-bold hover:bg-secondary transition-colors"
         >
-          Return Home
+          {t("checkout.returnHome")}
         </Link>
       </div>
     );
@@ -93,9 +96,9 @@ export const Checkout = () => {
   if (cart.length === 0) {
     return (
       <div className="container mx-auto px-4 py-20 text-center">
-        Your cart is empty.{" "}
+        {t("checkout.emptyCart")}{" "}
         <Link to="/shop" className="text-primary underline">
-          Go Shopping
+          {t("checkout.goShopping")}
         </Link>
       </div>
     );
@@ -103,7 +106,7 @@ export const Checkout = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-black text-dark mb-8">Checkout</h1>
+      <h1 className="text-3xl font-black text-dark mb-8">{t("checkout.title")}</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         <div className="lg:col-span-2">
@@ -118,13 +121,13 @@ export const Checkout = () => {
                 <span className="h-8 w-8 bg-primary/10 rounded-full flex items-center justify-center text-primary text-sm">
                   1
                 </span>
-                Shipping Information
+                {t("checkout.shippingInformation")}
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1">
-                    Email Address
+                    {t("checkout.emailAddress")}
                   </label>
                   <input
                     type="email"
@@ -136,7 +139,7 @@ export const Checkout = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">
-                    First Name
+                    {t("checkout.firstName")}
                   </label>
                   <input
                     type="text"
@@ -147,7 +150,7 @@ export const Checkout = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">
-                    Last Name
+                    {t("checkout.lastName")}
                   </label>
                   <input
                     type="text"
@@ -158,7 +161,7 @@ export const Checkout = () => {
                 </div>
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1">
-                    Address
+                    {t("checkout.address")}
                   </label>
                   <input
                     type="text"
@@ -168,7 +171,7 @@ export const Checkout = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">City</label>
+                  <label className="block text-sm font-medium mb-1">{t("checkout.city")}</label>
                   <input
                     type="text"
                     name="city"
@@ -179,7 +182,7 @@ export const Checkout = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">
-                      State
+                      {t("checkout.state")}
                     </label>
                     <input
                       type="text"
@@ -190,7 +193,7 @@ export const Checkout = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">
-                      Zip
+                      {t("checkout.zip")}
                     </label>
                     <input
                       type="text"
@@ -209,7 +212,7 @@ export const Checkout = () => {
                 <span className="h-8 w-8 bg-primary/10 rounded-full flex items-center justify-center text-primary text-sm">
                   2
                 </span>
-                Payment Method
+                {t("checkout.paymentMethod")}
               </h2>
 
               <div className="space-y-4">
@@ -219,7 +222,7 @@ export const Checkout = () => {
                     checked={paymentMethod === "cod"}
                     onChange={() => setPaymentMethod("cod")}
                   />
-                  Cash on Delivery
+                  {t("checkout.cashOnDelivery")}
                 </label>
 
                 <label className="flex items-center gap-3 cursor-pointer">
@@ -228,7 +231,7 @@ export const Checkout = () => {
                     checked={paymentMethod === "bank"}
                     onChange={() => setPaymentMethod("bank")}
                   />
-                  Bank Transfer
+                  {t("checkout.bankTransfer")}
                 </label>
 
                 <label className="flex items-center gap-3 cursor-pointer">
@@ -237,23 +240,22 @@ export const Checkout = () => {
                     checked={paymentMethod === "wallet"}
                     onChange={() => setPaymentMethod("wallet")}
                   />
-                  Electronic Wallets
+                  {t("checkout.electronicWallets")}
                 </label>
               </div>
 
               {(paymentMethod === "bank" || paymentMethod === "wallet") && (
                 <div className="mt-6 space-y-4">
-                  {/* عرض التفاصيل حسب طريقة الدفع */}
                   {paymentMethod === "bank" && (
                     <div className="bg-gray-50 p-4 rounded text-sm">
                       <p>
-                        <b>Bank Name:</b> National Bank
+                        <b>{t("checkout.bankName")}:</b> National Bank
                       </p>
                       <p>
-                        <b>Account Number:</b> 123456789
+                        <b>{t("checkout.accountNumber")}:</b> 123456789
                       </p>
                       <p>
-                        <b>Account Name:</b> Elegance Store
+                        <b>{t("checkout.accountName")}:</b> Elegance Store
                       </p>
                     </div>
                   )}
@@ -261,13 +263,15 @@ export const Checkout = () => {
                   {paymentMethod === "wallet" && (
                     <div className="bg-gray-50 p-4 rounded text-sm">
                       <p>
-                        <b>Wallet Number:</b> 01000000000
+                        <b>{t("checkout.walletNumber")}:</b> 01000000000
                       </p>
-                      <p>Supports: Fawry – Zain Cash – Bankak</p>
+                      <p>{t("checkout.walletSupports")}</p>
                     </div>
                   )}
 
-                  {/* رفع الصورة */}
+                  <label className="block text-sm font-medium mb-1">
+                    {t("checkout.uploadProof")}
+                  </label>
                   <input
                     type="file"
                     accept="image/*"
@@ -284,39 +288,42 @@ export const Checkout = () => {
 
         {/* Order Summary */}
         <div className="lg:col-span-1 bg-white p-6 rounded-xl shadow-lg sticky top-24 border border-secondary/10">
-          <h2 className="text-xl font-bold mb-4">Order Summary</h2>
+          <h2 className="text-xl font-bold mb-4">{t("cart.orderSummary")}</h2>
           <div className="max-h-60 overflow-y-auto space-y-3 mb-4 pr-2 custom-scrollbar">
-            {cart.map((item) => (
-              <div key={item.id} className="flex gap-3 items-center">
-                <div className="h-12 w-12 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
-                  <img
-                    src={item.mainImage}
-                    alt=""
-                    className="h-full w-full object-cover"
-                  />
+            {cart.map((item) => {
+              const itemName = getLocalizedText(item, language, item.name || '');
+              return (
+                <div key={item.id} className="flex gap-3 items-center">
+                  <div className="h-12 w-12 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
+                    <img
+                      src={item.mainImage}
+                      alt={itemName}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 text-sm">
+                    <p className="font-bold line-clamp-1">{itemName}</p>
+                    <p className="text-gray-500">{t("cart.quantity")}: {item.quantity}</p>
+                  </div>
+                  <p className="font-bold text-sm">
+                    ${(item.price * item.quantity).toFixed(2)}
+                  </p>
                 </div>
-                <div className="flex-1 text-sm">
-                  <p className="font-bold line-clamp-1">{item.name_en}</p>
-                  <p className="text-gray-500">Qty: {item.quantity}</p>
-                </div>
-                <p className="font-bold text-sm">
-                  ${(item.price * item.quantity).toFixed(2)}
-                </p>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="border-t border-gray-100 pt-4 space-y-2 text-sm">
             <div className="flex justify-between text-gray-600">
-              <span>Subtotal</span>
+              <span>{t("cart.subtotal")}</span>
               <span>${subtotal.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-gray-600">
-              <span>Shipping</span>
+              <span>{t("cart.shipping")}</span>
               <span>${shipping.toFixed(2)}</span>
             </div>
             <div className="flex justify-between font-bold text-lg text-dark mt-4 pt-4 border-t border-gray-100">
-              <span>Total</span>
+              <span>{t("cart.grandTotal")}</span>
               <span>${total.toFixed(2)}</span>
             </div>
           </div>
@@ -330,7 +337,7 @@ export const Checkout = () => {
             {isProcessing ? (
               <span className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></span>
             ) : (
-              "Place Order"
+              t("checkout.placeOrder")
             )}
           </button>
         </div>

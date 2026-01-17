@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { contentService } from '../api/services/contentService';
+import { useLanguage } from '../context/LanguageContext';
 
 export const FAQ = () => {
+  const { language } = useLanguage();
   const [items, setItems] = useState<{question:string, answer:string}[]>([]);
 
   useEffect(() => {
@@ -16,8 +18,19 @@ export const FAQ = () => {
        </div>
 
        <div className="relative mb-12">
-          <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary">search</span>
-          <input type="text" placeholder="Search for answers..." className="w-full h-14 pl-12 rounded-xl border-none shadow-sm bg-white focus:ring-2 focus:ring-primary" />
+          <span 
+            className="material-symbols-outlined absolute top-1/2 -translate-y-1/2 text-primary"
+            style={{
+              [language === 'ar' ? 'right' : 'left']: '1rem'
+            }}
+          >
+            search
+          </span>
+          <input 
+            type="text" 
+            placeholder="Search for answers..." 
+            className={`w-full h-14 rounded-xl border-none shadow-sm bg-white focus:ring-2 focus:ring-primary ${language === 'ar' ? 'pr-12' : 'pl-12'}`} 
+          />
        </div>
 
        <div className="flex justify-center flex-wrap gap-3 mb-8">

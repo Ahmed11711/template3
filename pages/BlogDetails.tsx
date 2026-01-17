@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { contentService } from "../api/services/contentService";
 import { BlogPost } from "../types";
+import { useLanguage } from "../context/LanguageContext";
 
 export const BlogDetails = () => {
   const { id } = useParams<{ id: string }>();
+  const { language } = useLanguage();
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -54,7 +56,9 @@ export const BlogDetails = () => {
           Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
           dolore eu fugiat nulla pariatur...
         </p>
-        <blockquote className="border-l-4 border-primary pl-4 italic text-xl my-8 text-dark">
+        <blockquote 
+          className={`border-primary italic text-xl my-8 text-dark ${language === 'ar' ? 'border-r-4 pr-4' : 'border-l-4 pl-4'}`}
+        >
           "Fashion is the armor to survive the reality of everyday life."
         </blockquote>
         <p>
