@@ -14,7 +14,7 @@ export const APIS = {
 };
 
 const USE_MOCK = false;
-const BASE_URL = 'http://127.0.0.1:8000';
+const BASE_URL = 'https://ecommerc.zayamrock.com';
 
 function mockRequest<T>(
   endpoint: { url: string; method: string },

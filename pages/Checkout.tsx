@@ -79,7 +79,9 @@ export const Checkout = () => {
             check_circle
           </span>
         </div>
-        <h1 className="text-4xl font-black text-dark mb-4">{t("checkout.orderConfirmed")}</h1>
+        <h1 className="text-4xl font-black text-dark mb-4">
+          {t("checkout.orderConfirmed")}
+        </h1>
         <p className="text-gray-600 max-w-md mb-8">
           {t("checkout.orderConfirmedMessage")}
         </p>
@@ -106,7 +108,9 @@ export const Checkout = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-black text-dark mb-8">{t("checkout.title")}</h1>
+      <h1 className="text-3xl font-black text-dark mb-8">
+        {t("checkout.title")}
+      </h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         <div className="lg:col-span-2">
@@ -137,6 +141,18 @@ export const Checkout = () => {
                     className="w-full rounded-lg border-gray-200 focus:ring-primary focus:border-primary"
                   />
                 </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    {t("checkout.walletNumber")}
+                  </label>
+                  <input
+                    type="text"
+                    name="walletNumber"
+                    placeholder="01094321637"
+                    className="w-full rounded-lg border-gray-200 focus:ring-primary focus:border-primary"
+                  />
+                </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">
                     {t("checkout.firstName")}
@@ -145,6 +161,7 @@ export const Checkout = () => {
                     type="text"
                     name="firstName"
                     required
+                    placeholder="Ahmed"
                     className="w-full rounded-lg border-gray-200 focus:ring-primary focus:border-primary"
                   />
                 </div>
@@ -156,6 +173,7 @@ export const Checkout = () => {
                     type="text"
                     name="lastName"
                     required
+                    placeholder="Awad"
                     className="w-full rounded-lg border-gray-200 focus:ring-primary focus:border-primary"
                   />
                 </div>
@@ -171,7 +189,9 @@ export const Checkout = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">{t("checkout.city")}</label>
+                  <label className="block text-sm font-medium mb-1">
+                    {t("checkout.city")}
+                  </label>
                   <input
                     type="text"
                     name="city"
@@ -252,10 +272,11 @@ export const Checkout = () => {
                         <b>{t("checkout.bankName")}:</b> National Bank
                       </p>
                       <p>
-                        <b>{t("checkout.accountNumber")}:</b> 123456789
+                        <b>{t("checkout.accountNumber")}:</b> 3782562
                       </p>
                       <p>
-                        <b>{t("checkout.accountName")}:</b> Elegance Store
+                        <b>{t("checkout.accountName")}:</b> وائل عبدالمنعم بخيت
+                        حسن
                       </p>
                     </div>
                   )}
@@ -263,8 +284,9 @@ export const Checkout = () => {
                   {paymentMethod === "wallet" && (
                     <div className="bg-gray-50 p-4 rounded text-sm">
                       <p>
-                        <b>{t("checkout.walletNumber")}:</b> 01000000000
+                        <b>{t("checkout.walletNumber")}:</b> 77021913
                       </p>
+                      <p>خديجة علي</p>
                       <p>{t("checkout.walletSupports")}</p>
                     </div>
                   )}
@@ -291,7 +313,11 @@ export const Checkout = () => {
           <h2 className="text-xl font-bold mb-4">{t("cart.orderSummary")}</h2>
           <div className="max-h-60 overflow-y-auto space-y-3 mb-4 pr-2 custom-scrollbar">
             {cart.map((item) => {
-              const itemName = getLocalizedText(item, language, item.name || '');
+              const itemName = getLocalizedText(
+                item,
+                language,
+                item.name || "",
+              );
               return (
                 <div key={item.id} className="flex gap-3 items-center">
                   <div className="h-12 w-12 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
@@ -303,7 +329,9 @@ export const Checkout = () => {
                   </div>
                   <div className="flex-1 text-sm">
                     <p className="font-bold line-clamp-1">{itemName}</p>
-                    <p className="text-gray-500">{t("cart.quantity")}: {item.quantity}</p>
+                    <p className="text-gray-500">
+                      {t("cart.quantity")}: {item.quantity}
+                    </p>
                   </div>
                   <p className="font-bold text-sm">
                     ${(item.price * item.quantity).toFixed(2)}

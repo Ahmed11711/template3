@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
 import { useLanguage } from "../context/LanguageContext";
+import logoUrl from "../assets/Al+Wafer+Mall+Logo+-+Variation+2.png";
 
 export const Layout: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -17,11 +18,14 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
         <div className="container mx-auto flex items-center justify-between px-4 py-3">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <span className="material-symbols-outlined text-3xl text-primary transition-transform group-hover:scale-110">
-              diamond
-            </span>
+            <img
+              src={logoUrl}
+              alt="Logo"
+              className="w-10 h-10 md:w-12 md:h-12 object-contain transition-transform group-hover:scale-110"
+            />
+
             <span className="text-xl font-bold tracking-tight text-primary">
-              Elegance
+              AL Wafer Mall
             </span>
           </Link>
 
@@ -81,10 +85,10 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
             >
               <span className="material-symbols-outlined">shopping_bag</span>
               {cart.length > 0 && (
-                <span 
+                <span
                   className="absolute top-0 h-4 w-4 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center"
                   style={{
-                    [language === 'ar' ? 'left' : 'right']: '0'
+                    [language === "ar" ? "left" : "right"]: "0",
                   }}
                 >
                   {cart.reduce((acc, item) => acc + item.quantity, 0)}
@@ -111,7 +115,9 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <h3 className="font-bold text-lg mb-4 text-primary">Elegance</h3>
-              <p className="text-sm text-gray-500">{t("footer.timelessFashion")}</p>
+              <p className="text-sm text-gray-500">
+                {t("footer.timelessFashion")}
+              </p>
             </div>
             <div>
               <h3 className="font-bold text-md mb-4">{t("navigation.shop")}</h3>

@@ -148,7 +148,9 @@
   "blog": {
     "title": "Blog",
     "readMore": "Read More",
-    "backToBlog": "Back to Blog"
+    "backToBlog": "Back to Blog",
+    "latestInsights":"latestInsights",
+    "shareArticle":"shareArticle"
   },
   "faq": {
     "title": "How can we help?",

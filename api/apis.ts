@@ -51,6 +51,11 @@ export const APIS = {
     url: '/api/front/orders',
     method: 'POST',
   },
+  GET_ALL:{
+    url: '/api/user/myorders',
+    method: 'get',
+
+  }
 
   },
   USER: {

@@ -84,7 +84,10 @@ export const Home = () => {
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {categories.map((cat, idx) => {
-            const categoryName = language === "ar" ? (cat.name_ar || cat.name_en || "") : (cat.name_en || cat.name_ar || "");
+            const categoryName =
+              language === "ar"
+                ? cat.name_ar || cat.name_en || ""
+                : cat.name_en || cat.name_ar || "";
             return (
               <Link
                 to={`/shop?category=${cat.id}`}
@@ -94,10 +97,10 @@ export const Home = () => {
                 <div className="absolute inset-0 bg-gray-200 animate-pulse"></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10"></div>
                 <img
-  src={cat.image}
-  alt={categoryName}
-  className="absolute inset-0 w-full h-full object-cover"
-/>
+                  src={cat.image}
+                  alt={categoryName}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
 
                 <span
                   className="absolute bottom-4 text-white font-bold text-lg z-20"
@@ -136,6 +139,7 @@ export const Home = () => {
       {/* Blog Section */}
       <section className="bg-surface-dim py-16">
         <div className="container mx-auto px-4">
+          {/* عنوان القسم واللينك */}
           <div className="flex justify-between items-end mb-10">
             <h2 className="text-3xl font-bold text-dark">
               {t("home.fromTheBlog")}
@@ -147,29 +151,31 @@ export const Home = () => {
               {t("home.readAllArticles")}
             </Link>
           </div>
+
+          {/* المقالات */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {posts.map((post) => {
-              const postTitle = getLocalizedText(
-                post,
-                language,
-                post.title || "",
-              );
-              const postExcerpt = getLocalizedText(
-                post,
-                language,
-                post.excerpt || "",
-              );
-              const postCategory = getLocalizedText(
-                post,
-                language,
-                post.category || "",
-              );
+              // اختيار النصوص حسب اللغة
+              const postTitle =
+                language === "ar"
+                  ? post.title_ar || post.title
+                  : post.title || post.title_ar;
+              const postExcerpt =
+                language === "ar"
+                  ? post.excerpt_ar || post.excerpt
+                  : post.excerpt || post.excerpt_ar;
+              const postCategory =
+                language === "ar"
+                  ? post.category_ar || post.category
+                  : post.category || post.category_ar;
+
               return (
                 <Link
                   to={`/blog/${post.id}`}
                   key={post.id}
                   className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all border border-secondary/10 flex flex-col"
                 >
+                  {/* صورة المقال */}
                   <div
                     className="overflow-hidden rounded-xl mb-4"
                     style={{ height: "200px" }}
@@ -180,6 +186,8 @@ export const Home = () => {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
+
+                  {/* محتوى المقال */}
                   <div className="p-6 flex flex-col flex-1">
                     <div className="text-xs font-bold text-primary mb-2 uppercase tracking-wide">
                       {postCategory}
@@ -201,6 +209,8 @@ export const Home = () => {
               );
             })}
           </div>
+
+          {/* لينك للمقالات للجوال */}
           <div className="text-center mt-8 sm:hidden">
             <Link to="/blog" className="text-primary font-bold hover:underline">
               {t("home.readAllArticles")}

@@ -117,7 +117,8 @@
     "accountName": "اسم الحساب",
     "walletNumber": "رقم المحفظة",
     "walletSupports": "يدعم: فوري – زين كاش – بنكاك",
-    "uploadProof": "رفع إثبات الدفع"
+    "uploadProof": "رفع إثبات الدفع",
+    "phone":"الهاتف"
   },
   "account": {
     "title": "حسابي",
@@ -148,7 +149,9 @@
   "blog": {
     "title": "المدونة",
     "readMore": "اقرأ المزيد",
-    "backToBlog": "العودة إلى المدونة"
+    "backToBlog": "العودة إلى المدونة",
+    "latestInsights":"المقالات",
+    "shareArticle":"مشاركة المقال"
   },
   "faq": {
     "title": "كيف يمكننا المساعدة؟",

@@ -6,7 +6,7 @@ import { useLanguage } from "../context/LanguageContext";
 
 export const BlogDetails = () => {
   const { id } = useParams<{ id: string }>();
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -22,54 +22,63 @@ export const BlogDetails = () => {
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <div className="p-20 text-center">Loading...</div>;
+  if (loading)
+    return <div className="p-20 text-center">{t("common.loading")}</div>;
   if (error)
     return <div className="p-20 text-center text-red-600">{error}</div>;
-  if (!post) return <div className="p-20 text-center">Article not found.</div>;
+  if (!post)
+    return <div className="p-20 text-center">{t("blog.notFound")}</div>;
+
+  // دالة اختيار النص حسب اللغة
+  const getLocalized = (
+    arField: string | undefined,
+    enField: string | undefined,
+  ) => {
+    return language === "ar"
+      ? arField || enField || ""
+      : enField || arField || "";
+  };
+
+  const postTitle = getLocalized(post.title_ar, post.title);
+  const postExcerpt = getLocalized(post.excerpt_ar, post.excerpt);
+  const postData = getLocalized(post.date_ar, post.date);
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
       {/* العنوان */}
-      <h1 className="text-4xl md:text-5xl font-black text-dark mb-6 leading-tight">
-        {post.title}
+      <h1
+        className={`text-4xl md:text-5xl font-black text-dark mb-6 leading-tight ${language === "ar" ? "text-right" : "text-left"}`}
+      >
+        {postTitle}
       </h1>
 
       {/* الصورة */}
       <div className="aspect-video rounded-xl overflow-hidden mb-6 shadow-lg">
         <img
           src={post.image}
-          alt={post.title}
+          alt={postTitle}
           className="w-full h-full object-cover"
         />
       </div>
 
-      {/* الوصف الحقيقي من الباك اند */}
-      <p className="text-gray-700 text-lg mb-8">{post.date}</p>
+      {/* التاريخ / ملخص */}
+      <p
+        className={`text-gray-700 text-lg mb-8 ${language === "ar" ? "text-right" : "text-left"}`}
+      >
+        {postData}
+      </p>
 
       {/* باقي المقال */}
-      <article className="prose prose-lg max-w-none text-gray-700">
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
-        <h3 className="text-2xl font-bold text-dark mt-8 mb-4">
-          Why it matters
-        </h3>
-        <p>
-          Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-          dolore eu fugiat nulla pariatur...
-        </p>
-        <blockquote 
-          className={`border-primary italic text-xl my-8 text-dark ${language === 'ar' ? 'border-r-4 pr-4' : 'border-l-4 pl-4'}`}
-        >
-          "Fashion is the armor to survive the reality of everyday life."
-        </blockquote>
-        <p>
-          Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-          accusantium doloremque laudantium...
-        </p>
+      <article
+        className={`prose prose-lg max-w-none text-gray-700 ${language === "ar" ? "prose-rtl" : ""}`}
+      >
+        <p>{postExcerpt}</p>
+        {/* إذا عندك محتوى HTML كامل للمقال من الباك اند ممكن تحطه هنا */}
       </article>
 
       {/* أزرار المشاركة */}
       <div className="mt-16 pt-8 border-t border-gray-200">
-        <h3 className="text-xl font-bold mb-6">Share this article</h3>
+        <h3 className="text-xl font-bold mb-6">{t("blog.shareArticle")}</h3>
         <div className="flex gap-4">
           <button className="h-10 w-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center hover:bg-blue-200 transition-colors">
             FB
@@ -87,10 +96,12 @@ export const BlogDetails = () => {
       <div className="mt-8">
         <Link
           to="/blog"
-          className="text-sm text-gray-500 hover:text-primary flex items-center gap-1"
+          className={`text-sm text-gray-500 hover:text-primary flex items-center gap-1 ${language === "ar" ? "justify-end" : "justify-start"}`}
         >
-          <span className="material-symbols-outlined text-sm">arrow_back</span>
-          Back to Insights
+          <span className="material-symbols-outlined text-sm">
+            {language === "ar" ? "arrow_forward" : "arrow_back"}
+          </span>
+          {t("blog.backToBlog")}
         </Link>
       </div>
     </div>

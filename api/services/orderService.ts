@@ -1,18 +1,21 @@
+// src/api/services/orderService.ts
 import { request } from '../client';
 import { APIS } from '../apis';
 import { Order } from '../../types';
+
 export const orderService = {
+  // انشاء طلب
   createOrder: (data: object, imageFile?: File) => {
     const formData = new FormData();
-
-    // حوّل كل البيانات النصية ل JSON string
     formData.append('data', JSON.stringify(data));
-
-    // أضف الصورة الحقيقية
     if (imageFile) {
-      formData.append('image', imageFile); // اسم الحقل 'image' لازم يتوافق مع السيرفر
+      formData.append('image', imageFile);
     }
-
     return request<Order>(APIS.ORDERS.CREATE, formData);
   },
+
+  // جلب كل الطلبات للمستخدم
+  getOrders: () => {
+    return request<Order[]>(APIS.ORDERS.GET_ALL); // مفترض يكون عندك endpoint اسمه GET_ALL
+  }
 };

@@ -3,7 +3,7 @@ import axios from "axios";
 import { Category } from "../../types";
 
 // Base URL
-const API_URL = "http://127.0.0.1:8000/api/front"; // عدّل حسب الباك اند عندك
+const API_URL = "https://ecommerc.zayamrock.com/api/front"; // عدّل حسب الباك اند عندك
 
 export const categoryService = {
   /**
