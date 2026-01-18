@@ -8,6 +8,8 @@ import { useShop } from "../context/ShopContext";
 import { useLanguage } from "../context/LanguageContext";
 import { getLocalizedText } from "../utils/i18n";
 
+const FALLBACK_IMAGE = "/fallback-image.png";
+
 export const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
   const { language, t } = useLanguage();
@@ -30,19 +32,17 @@ export const ProductDetails = () => {
       .getOne(id)
       .then((prod) => {
         setProduct(prod);
-        setMainImage(prod.mainImage || "/fallback-image.png");
+        setMainImage(prod.mainImage || FALLBACK_IMAGE);
         setQuantity(1);
       })
       .catch(() => setError(t("common.error")))
       .finally(() => setLoading(false));
 
-    // Fetch any products to show as "related"
+    // Fetch related products
     productService
       .getAll()
       .then((all) => {
-        // Remove current product from the list
         const filtered = all.filter((p) => p.id !== String(id));
-        // Pick 4 random products
         const shuffled = filtered.sort(() => 0.5 - Math.random());
         setRelated(shuffled.slice(0, 4));
       })
@@ -63,28 +63,43 @@ export const ProductDetails = () => {
   if (!product) return null;
 
   const isFav = favorites.includes(product.id);
-  const productName = getLocalizedText(product, language, product.name || '');
-  const productDescription = getLocalizedText(product, language, product.description || '');
+  const productName = getLocalizedText(product, language, product.name || "");
+  const productDescription = getLocalizedText(
+    product,
+    language,
+    product.description || "",
+  );
 
-  // Handle images
-  const images = product.additionalImages
-    ? product.additionalImages.split(",").map((img) => img.trim())
-    : [product.mainImage || "/fallback-image.png"];
-  const mainImg =
-    mainImage || product.mainImage || images[0] || "/fallback-image.png";
+  // Handle additional images
+  let images: string[] = [];
+  if (product.additionalImages) {
+    try {
+      images = JSON.parse(product.additionalImages);
+    } catch (err) {
+      console.error("Failed to parse additionalImages:", err);
+      images = [product.mainImage || FALLBACK_IMAGE];
+    }
+  } else {
+    images = [product.mainImage || FALLBACK_IMAGE];
+  }
+
+  // Main image displayed
+  const mainImg = mainImage || product.mainImage || images[0] || FALLBACK_IMAGE;
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
         {/* Product Images */}
         <div className="space-y-4">
-          <div className="aspect-square bg-gray-100 rounded-xl overflow-hidden shadow-lg">
+          <div className="w-full max-w-[700px] h-[600px] bg-gray-100 rounded-xl overflow-hidden shadow-lg mx-auto">
             <img
               src={mainImg}
               alt={productName}
               className="w-full h-full object-cover"
             />
           </div>
+
+          {/* Thumbnails */}
           <div className="grid grid-cols-4 gap-4">
             {images.map((img, i) => (
               <div
@@ -108,12 +123,13 @@ export const ProductDetails = () => {
           <p className="text-3xl font-bold text-primary">
             ${product.price?.toFixed(2) ?? "0.00"}
           </p>
-          <p className="text-gray-600 leading-relaxed">
-            {productDescription}
-          </p>
+          <p className="text-gray-600 leading-relaxed">{productDescription}</p>
 
+          {/* Quantity Selector */}
           <div className="flex items-center gap-4 pt-4">
-            <span className="font-medium text-dark">{t("product.quantity")}:</span>
+            <span className="font-medium text-dark">
+              {t("product.quantity")}:
+            </span>
             <div className="flex items-center border border-gray-300 rounded-lg">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -136,6 +152,7 @@ export const ProductDetails = () => {
             </div>
           </div>
 
+          {/* Add to Cart & Favorite */}
           <div className="flex gap-4 pt-4">
             <button
               onClick={() => addToCart(product, quantity)}
@@ -182,4 +199,5 @@ export const ProductDetails = () => {
     </div>
   );
 };
+
 export default ProductDetails;

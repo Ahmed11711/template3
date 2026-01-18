@@ -57,7 +57,7 @@ export async function request<T>(
     method: endpoint.method,
     headers,
     body: payload,
-    credentials: 'include', // مهم جداً
+    // ❌ امسح credentials: 'include'
   });
 
   const text = await response.text();
@@ -68,4 +68,5 @@ export async function request<T>(
     throw new Error('Expected JSON, got HTML or invalid JSON');
   }
 }
+
 
