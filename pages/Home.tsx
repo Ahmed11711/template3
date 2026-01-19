@@ -54,7 +54,7 @@ export const Home = () => {
   return (
     <div className="space-y-16 pb-16">
       {/* Hero Section */}
-      <section className="relative min-h-[500px] flex items-center justify-start p-8 md:p-16">
+      <section className="relative min-h-[300px] sm:min-h-[380px] md:min-h-[500px] flex items-center justify-start p-6 sm:p-8 md:p-16">
         <div className="absolute inset-0 z-0">
           <div
             className="w-full h-full bg-cover bg-center"
@@ -63,14 +63,19 @@ export const Home = () => {
             }}
           ></div>
         </div>
+
         <div className="relative z-10 max-w-lg">
-          <h1 className="text-4xl md:text-6xl font-black text-primary leading-tight tracking-tighter mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-primary leading-tight tracking-tighter mb-4">
             {t("home.heroTitle")}
           </h1>
-          <p className="text-lg text-dark/80 mb-8">{t("home.heroSubtitle")}</p>
+
+          <p className="text-base sm:text-lg text-dark/80 mb-6 md:mb-8">
+            {t("home.heroSubtitle")}
+          </p>
+
           <Link
             to="/shop"
-            className="inline-flex items-center justify-center px-8 py-3 text-base font-bold text-white bg-primary rounded-lg shadow-lg hover:bg-secondary transition-all hover:scale-105"
+            className="inline-flex items-center justify-center px-6 sm:px-8 py-2.5 sm:py-3 text-sm sm:text-base font-bold text-white bg-primary rounded-lg shadow-lg hover:bg-secondary transition-all hover:scale-105"
           >
             {t("home.shopNow")}
           </Link>

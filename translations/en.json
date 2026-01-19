@@ -176,11 +176,11 @@
     "messagePlaceholder": "Write your message here...",
     "sendMessage": "Send Message",
     "address": "Address",
-    "addressValue": "123 Elegant Avenue, Suite 456\nFashion City, 78910",
+    "addressValue": "Omdurman, Khartoum, Sudan",
     "phone": "Phone",
-    "phoneValue": "(123) 456-7890",
+    "phoneValue": "249925048038+",
     "emailLabel": "Email",
-    "emailValue": "support@elegantstore.com",
+    "emailValue": "wayelabdo183@gmail.com",
     "mapPlaceholder": "Map Placeholder"
   },
   "about": {
@@ -208,6 +208,6 @@
     "bestSellers": "Best Sellers",
     "support": "Support",
     "followUs": "Follow Us",
-    "copyright": "© 2024 Elegance Store. All Rights Reserved."
+    "copyright": "© 2026. Made by Al-Ruwwad Digital."
   }
 }

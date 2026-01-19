@@ -177,11 +177,11 @@
     "messagePlaceholder": "اكتب رسالتك هنا...",
     "sendMessage": "إرسال الرسالة",
     "address": "العنوان",
-    "addressValue": "123 شارع الأناقة، جناح 456\nمدينة الموضة، 78910",
+    "addressValue": "  السودان الخرطوم ام درمان",
     "phone": "الهاتف",
-    "phoneValue": "(123) 456-7890",
+    "phoneValue": "249925048038+",
     "emailLabel": "البريد الإلكتروني",
-    "emailValue": "support@elegantstore.com",
+    "emailValue": "wayelabdo183@gmail.com",
     "mapPlaceholder": "خريطة الموقع"
   },
   "about": {
@@ -209,6 +209,6 @@
     "bestSellers": "الأكثر مبيعاً",
     "support": "الدعم",
     "followUs": "تابعنا",
-    "copyright": "© 2024 متجر Elegance. جميع الحقوق محفوظة."
+    "copyright": "© 2026. صنع بواسطة الرواد الرقمية."
   }
 }
