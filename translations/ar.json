@@ -72,7 +72,8 @@
     "relatedProducts": "قد يعجبك أيضاً",
     "noRelatedProducts": "لم يتم العثور على منتجات ذات صلة.",
     "outOfStock": "نفد المخزون",
-    "inStock": "متوفر"
+    "inStock": "متوفر",
+    "size":"الحجم"
   },
   "cart": {
     "title": "سلة التسوق",

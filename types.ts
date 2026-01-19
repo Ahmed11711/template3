@@ -17,6 +17,7 @@ export interface Product {
   mainImage?: string;
   additionalImages?: string;
   stock?: number;
+  sizes?:any
 }
 
 export interface Category {

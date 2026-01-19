@@ -72,7 +72,9 @@
     "relatedProducts": "You Might Also Like",
     "noRelatedProducts": "No related products found.",
     "outOfStock": "Out of Stock",
-    "inStock": "In Stock"
+    "inStock": "In Stock",
+    "size":"size"
+
   },
   "cart": {
     "title": "Your Cart",

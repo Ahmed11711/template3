@@ -2,13 +2,13 @@
 import React, { useEffect, useState } from "react";
 import { Product, Category } from "../types";
 import { ProductCard } from "../components/ProductCard";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { categoryService } from "../api/services/categoryService";
 import { useLanguage } from "../context/LanguageContext";
-import { getLocalizedText } from "../utils/i18n";
 
 export const Shop = () => {
   const { language, t } = useLanguage();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const initialCategory = searchParams.get("category");
 
@@ -25,19 +25,17 @@ export const Shop = () => {
   const [priceRange, setPriceRange] = useState<number>(1000);
   const [sortOption, setSortOption] = useState<string>(t("shop.newest"));
 
-  // Fetch categories + products from API
+  // Fetch categories + products
   useEffect(() => {
     const fetchCategories = async () => {
       setLoading(true);
       try {
-        const data: Category[] = await categoryService.getAll(); // API بترجع كل الكاتيجوري + المنتجات
+        const data: Category[] = await categoryService.getAll();
         setCategories(data);
 
-        // جمع كل المنتجات
         const allProds = data.flatMap((c) => c.products);
         setAllProducts(allProds);
 
-        // لو فيه كاتيجوري محددة من query params
         if (initialCategory) {
           setProducts(
             allProds.filter((p) =>
@@ -58,11 +56,10 @@ export const Shop = () => {
     fetchCategories();
   }, [initialCategory]);
 
-  // Apply filters whenever they change
+  // Apply filters
   useEffect(() => {
     let filtered = [...allProducts];
 
-    // Filter by selected categories
     if (selectedCategories.length > 0) {
       filtered = filtered.filter((p) =>
         selectedCategories.some((catId) =>
@@ -73,16 +70,14 @@ export const Shop = () => {
       );
     }
 
-    // Filter by price
     filtered = filtered.filter((p) => p.price <= priceRange);
 
-    // Sort
     if (sortOption === t("shop.priceLowToHigh")) {
       filtered.sort((a, b) => a.price - b.price);
     } else if (sortOption === t("shop.priceHighToLow")) {
       filtered.sort((a, b) => b.price - a.price);
     } else {
-      filtered.sort((a, b) => b.id - a.id); // Newest first
+      filtered.sort((a, b) => b.id - a.id);
     }
 
     setProducts(filtered);
@@ -101,7 +96,9 @@ export const Shop = () => {
       {/* Header + Sorting */}
       <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
         <div>
-          <div className="text-sm text-gray-500 mb-2">{t("shop.breadcrumb")}</div>
+          <div className="text-sm text-gray-500 mb-2">
+            {t("shop.breadcrumb")}
+          </div>
           <h1 className="text-4xl font-extrabold text-dark tracking-tight">
             {t("shop.title")}
           </h1>
@@ -128,7 +125,10 @@ export const Shop = () => {
                 <h3 className="font-semibold mb-2">{t("shop.category")}</h3>
                 <div className="space-y-2">
                   {categories.map((c) => {
-                    const categoryName = language === "ar" ? (c.name_ar || c.name_en || "") : (c.name_en || c.name_ar || "");
+                    const categoryName =
+                      language === "ar"
+                        ? c.name_ar || c.name_en || ""
+                        : c.name_en || c.name_ar || "";
                     return (
                       <label
                         key={c.id}
@@ -140,7 +140,9 @@ export const Shop = () => {
                           checked={selectedCategories.includes(c.id)}
                           onChange={() => toggleCategory(c.id)}
                         />
-                        <span className="text-sm text-gray-600">{categoryName}</span>
+                        <span className="text-sm text-gray-600">
+                          {categoryName}
+                        </span>
                       </label>
                     );
                   })}
@@ -149,7 +151,9 @@ export const Shop = () => {
 
               {/* Price Filter */}
               <div>
-                <h3 className="font-semibold mb-2">{t("shop.maxPrice")}: ${priceRange}</h3>
+                <h3 className="font-semibold mb-2">
+                  {t("shop.maxPrice")}: ${priceRange}
+                </h3>
                 <input
                   type="range"
                   min="0"
@@ -182,7 +186,9 @@ export const Shop = () => {
         {/* Product Grid */}
         <div className="lg:col-span-3">
           {loading ? (
-            <div className="text-center py-20 text-gray-500">{t("common.loading")}</div>
+            <div className="text-center py-20 text-gray-500">
+              {t("common.loading")}
+            </div>
           ) : products.length === 0 ? (
             <div className="text-center py-20 text-gray-500">
               <span className="material-symbols-outlined text-4xl mb-2">

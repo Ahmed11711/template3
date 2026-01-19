@@ -116,7 +116,10 @@ export const Cart = () => {
                 </div>
                 <div className="sm:col-span-3 flex justify-end items-center gap-4">
                   <span className="font-bold text-dark">
-                    ${(item.price * item.quantity).toFixed(2)}
+                    <span className="text-primary">
+                      {(item.price * item.quantity).toFixed(2)}
+                    </span>
+                    <span className="text-gray-500 ml-1">SDG</span>
                   </span>
                   <button
                     onClick={() => removeFromCart(item.id)}
@@ -137,17 +140,26 @@ export const Cart = () => {
             <div className="space-y-4 mb-6">
               <div className="flex justify-between text-gray-600">
                 <span>{t("cart.subtotal")}</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>
+                  <span className="text-primary">{subtotal.toFixed(2)}</span>
+                  <span className="text-gray-500 ml-1">SDG</span>
+                </span>
               </div>
               <div className="flex justify-between text-gray-600">
                 <span>{t("cart.shipping")}</span>
-                <span>${shipping.toFixed(2)}</span>
+                <span>
+                  <span className="text-primary">{shipping.toFixed(2)}</span>
+                  <span className="text-gray-500 ml-1">SDG</span>
+                </span>
               </div>
             </div>
             <div className="border-t border-gray-200 my-4"></div>
             <div className="flex justify-between font-bold text-xl text-dark mb-6">
               <span>{t("cart.grandTotal")}</span>
-              <span>${total.toFixed(2)}</span>
+              <span>
+                <span className="text-primary">{total.toFixed(2)}</span>
+                <span className="text-gray-500 ml-1">SDG</span>
+              </span>
             </div>
             <button
               onClick={() => navigate("/checkout")}

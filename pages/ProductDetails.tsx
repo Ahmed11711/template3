@@ -13,13 +13,15 @@ const FALLBACK_IMAGE = "/fallback-image.png";
 export const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
   const { language, t } = useLanguage();
+  const { addToCart, toggleFavorite, favorites } = useShop();
+
   const [product, setProduct] = useState<Product | null>(null);
   const [related, setRelated] = useState<Product[]>([]);
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState<string>("");
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { addToCart, toggleFavorite, favorites } = useShop();
 
   useEffect(() => {
     if (!id) return;
@@ -31,9 +33,21 @@ export const ProductDetails = () => {
     productService
       .getOne(id)
       .then((prod) => {
-        setProduct(prod);
+        // تحويل sizes من string JSON إلى array
+        let sizesArray: string[] | null = null;
+        if (prod.sizes) {
+          try {
+            sizesArray = JSON.parse(prod.sizes);
+          } catch (err) {
+            console.error("Failed to parse sizes:", err);
+            sizesArray = null;
+          }
+        }
+
+        setProduct({ ...prod, sizes: sizesArray });
         setMainImage(prod.mainImage || FALLBACK_IMAGE);
         setQuantity(1);
+        setSelectedSize(sizesArray?.[0] || null); // أول حجم افتراضي لو موجود
       })
       .catch(() => setError(t("common.error")))
       .finally(() => setLoading(false));
@@ -83,7 +97,6 @@ export const ProductDetails = () => {
     images = [product.mainImage || FALLBACK_IMAGE];
   }
 
-  // Main image displayed
   const mainImg = mainImage || product.mainImage || images[0] || FALLBACK_IMAGE;
 
   return (
@@ -120,10 +133,36 @@ export const ProductDetails = () => {
         {/* Product Info */}
         <div className="flex flex-col gap-6">
           <h1 className="text-4xl font-bold text-dark">{productName}</h1>
-          <p className="text-3xl font-bold text-primary">
-            ${product.price?.toFixed(2) ?? "0.00"}
+          <p className="font-bold">
+            <span className="text-primary">{product.price.toFixed(2)}</span>
+            <span className="text-gray-500 ml-1">SDG</span>
           </p>
+
           <p className="text-gray-600 leading-relaxed">{productDescription}</p>
+
+          {/* Sizes */}
+          {product.sizes && product.sizes.length > 0 && (
+            <div className="flex items-center gap-4 pt-4 flex-wrap">
+              <span className="font-medium text-dark">
+                {t("product.size")}:
+              </span>
+              <div className="flex gap-2 flex-wrap">
+                {product.sizes.map((size: string) => (
+                  <button
+                    key={size}
+                    onClick={() => setSelectedSize(size)}
+                    className={`px-4 py-2 border rounded-lg font-bold transition-all ${
+                      selectedSize === size
+                        ? "bg-primary text-white border-primary shadow"
+                        : "bg-white text-gray-600 border-gray-300 hover:border-primary"
+                    }`}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Quantity Selector */}
           <div className="flex items-center gap-4 pt-4">
@@ -153,9 +192,9 @@ export const ProductDetails = () => {
           </div>
 
           {/* Add to Cart & Favorite */}
-          <div className="flex gap-4 pt-4">
+          <div className="flex gap-4 pt-4 flex-wrap">
             <button
-              onClick={() => addToCart(product, quantity)}
+              onClick={() => addToCart(product, quantity, selectedSize || "M")}
               className="flex-1 bg-primary text-white py-4 rounded-lg font-bold shadow-lg hover:bg-secondary transition-all hover:scale-105 flex justify-center items-center gap-2 active:scale-95"
             >
               <span className="material-symbols-outlined">
@@ -163,6 +202,7 @@ export const ProductDetails = () => {
               </span>
               {t("product.addToCart")}
             </button>
+
             <button
               onClick={() => toggleFavorite(product.id)}
               className={`px-6 py-4 border-2 rounded-lg font-bold transition-colors flex items-center justify-center ${

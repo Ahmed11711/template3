@@ -3,6 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
 import { useLanguage } from "../context/LanguageContext";
 import logoUrl from "../assets/Al+Wafer+Mall+Logo+-+Variation+2.png";
+import { ShoppingCart } from "lucide-react";
+
 import {
   FaTiktok,
   FaGoogle,
@@ -112,7 +114,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
               to="/cart"
               className="p-2 hover:bg-accent rounded-full transition-colors relative"
             >
-              <span className="material-symbols-outlined">shopping_bag</span>
+              <ShoppingCart size={24} strokeWidth={2} />
               {cart.length > 0 && (
                 <span
                   className="absolute top-0 h-4 w-4 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center"
